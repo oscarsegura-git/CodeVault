@@ -286,6 +286,7 @@ export default function SnippetEditor({ isOpen, onClose, initialData }: any) {
                       minHeight: '300px',
                       outline: 'none',
                       color: '#fff',
+                      whiteSpace: settings.wordWrap ? 'pre-wrap' : 'pre',
                     }}
                     className="code-editor-textarea"
                     textareaClassName="outline-none"
@@ -365,6 +366,7 @@ export default function SnippetEditor({ isOpen, onClose, initialData }: any) {
                             outline: 'none',
                             backgroundColor: 'transparent',
                             lineHeight: '1.6',
+                            whiteSpace: settings.wordWrap ? 'pre-wrap' : 'pre',
                           }}
                         />
                       </div>

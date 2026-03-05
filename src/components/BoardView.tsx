@@ -163,54 +163,14 @@ export default function BoardView() {
 
   return (
     <div className="h-full w-full flex flex-col p-4 md:p-8 overflow-y-auto bg-zinc-50/50 dark:bg-zinc-950/50 custom-scrollbar">
-      <div className="flex flex-wrap items-center justify-between gap-6 mb-8 shrink-0">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 shrink-0">
         <div>
           <h2 className="text-3xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight mb-1">Board</h2>
           <p className="text-zinc-500 font-medium">
             {boardType === 'projects' ? 'Manage your projects and track progress.' : 'Track your learning progress across snippets.'}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="relative w-full md:w-64 group">
-             <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-               <Layout className="w-4 h-4 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" />
-             </div>
-             <input 
-               type="text" 
-               placeholder="Search..." 
-               value={search}
-               onChange={(e) => setSearch(e.target.value)}
-               className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
-             />
-          </div>
-
-          {boardType === 'snippets' && (
-            <>
-              <select 
-                value={selectedLanguage}
-                onChange={(e) => {
-                  setSelectedLanguage(e.target.value);
-                  setSelectedLibrary('All'); // Reset library when language changes
-                }}
-                className="px-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-zinc-700 dark:text-zinc-300 shadow-sm"
-              >
-                {languages.map(lang => (
-                  <option key={lang} value={lang}>{lang}</option>
-                ))}
-              </select>
-
-              <select 
-                value={selectedLibrary}
-                onChange={(e) => setSelectedLibrary(e.target.value)}
-                className="px-4 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-zinc-700 dark:text-zinc-300 shadow-sm max-w-[150px]"
-              >
-                {libraries.map(lib => (
-                  <option key={lib} value={lib}>{lib}</option>
-                ))}
-              </select>
-            </>
-          )}
-
+        <div className="flex items-center gap-3">
           <div className="bg-zinc-100 dark:bg-zinc-900 p-1.5 rounded-xl flex items-center border border-zinc-200 dark:border-zinc-800">
             <button
               onClick={() => setBoardType('projects')}
@@ -248,6 +208,48 @@ export default function BoardView() {
             </button>
           )}
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-4 mb-8 shrink-0 bg-white dark:bg-zinc-900 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+        <div className="relative flex-1 min-w-[200px]">
+           <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+             <Layout className="w-4 h-4 text-zinc-400" />
+           </div>
+           <input 
+             type="text" 
+             placeholder="Search..." 
+             value={search}
+             onChange={(e) => setSearch(e.target.value)}
+             className="w-full pl-10 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+           />
+        </div>
+
+        {boardType === 'snippets' && (
+          <div className="flex flex-wrap items-center gap-2">
+            <select 
+              value={selectedLanguage}
+              onChange={(e) => {
+                setSelectedLanguage(e.target.value);
+                setSelectedLibrary('All'); // Reset library when language changes
+              }}
+              className="px-4 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-zinc-700 dark:text-zinc-300"
+            >
+              {languages.map(lang => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
+
+            <select 
+              value={selectedLibrary}
+              onChange={(e) => setSelectedLibrary(e.target.value)}
+              className="px-4 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-zinc-700 dark:text-zinc-300 max-w-[150px]"
+            >
+              {libraries.map(lib => (
+                <option key={lib} value={lib}>{lib}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <AnimatePresence>

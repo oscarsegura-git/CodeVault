@@ -74,8 +74,11 @@ interface SnippetContextType {
     autoBackup: boolean;
     appLock: boolean;
     masterPassword?: string;
+    wordWrap: boolean;
+    showLineNumbers: boolean;
   };
   updateSettings: (settings: any) => void;
+  importData: (data: any) => Promise<void>;
 }
 
 const SnippetContext = createContext<SnippetContextType | undefined>(undefined);
@@ -121,7 +124,9 @@ export function SnippetProvider({ children }: { children: ReactNode }) {
       defaultLanguage: 'JavaScript',
       autoSave: true,
       autoBackup: false,
-      appLock: false
+      appLock: false,
+      wordWrap: true,
+      showLineNumbers: true
     };
   });
 
@@ -754,6 +759,31 @@ export function SnippetProvider({ children }: { children: ReactNode }) {
     return await res.json();
   };
 
+  const importData = async (data: any) => {
+    try {
+      if (data.snippets) setSnippets(data.snippets);
+      if (data.tags) setTags(data.tags);
+      if (data.collections) setCollections(data.collections);
+      if (data.projects) setProjects(data.projects);
+      if (data.files) setFiles(data.files);
+      if (data.workspaceFolders) setWorkspaceFolders(data.workspaceFolders);
+      if (data.definitions) setDefinitions(data.definitions);
+      if (data.libraries) setLibraries(data.libraries);
+      if (data.challenges) setChallenges(data.challenges);
+      if (data.settings) setSettings(data.settings);
+      
+      // Also send to backend if needed
+      await fetch('/api/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch (error) {
+      console.error('Failed to import data', error);
+      throw error;
+    }
+  };
+
   return (
     <SnippetContext.Provider value={{ 
       snippets, 
@@ -802,7 +832,8 @@ export function SnippetProvider({ children }: { children: ReactNode }) {
       filter,
       setFilter,
       settings,
-      updateSettings
+      updateSettings,
+      importData
     }}>
       {children}
     </SnippetContext.Provider>

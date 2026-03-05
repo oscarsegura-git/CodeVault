@@ -144,6 +144,11 @@ export default function StatsView() {
     };
   });
 
+  // Calculate Average Snippet Length
+  const avgSnippetLength = totalSnippets > 0 
+    ? Math.round(snippets.reduce((acc, curr) => acc + (curr.code?.split('\n').length || 0), 0) / totalSnippets)
+    : 0;
+
   const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
   return (
@@ -156,7 +161,7 @@ export default function StatsView() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -174,6 +179,26 @@ export default function StatsView() {
           </div>
           <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
             <div className="bg-indigo-500 h-full rounded-full" style={{ width: '100%' }} />
+          </div>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm"
+        >
+          <div className="flex items-center gap-4 mb-4">
+            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
+              <FileCode className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-zinc-500 uppercase tracking-wider">Avg Length</div>
+              <div className="text-3xl font-black text-zinc-900 dark:text-zinc-100">{avgSnippetLength} <span className="text-xs text-zinc-400 font-normal">lines</span></div>
+            </div>
+          </div>
+          <div className="w-full bg-zinc-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+            <div className="bg-blue-500 h-full rounded-full" style={{ width: '100%' }} />
           </div>
         </motion.div>
 

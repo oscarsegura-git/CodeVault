@@ -8,7 +8,7 @@ import SearchableSelect from './SearchableSelect';
 const LANGUAGES = ['JavaScript', 'TypeScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust', 'Swift', 'Kotlin', 'SQL', 'HTML', 'CSS', 'Markdown', 'Shell'];
 
 export default function Settings() {
-  const { snippets, refreshSnippets, settings, updateSettings } = useSnippets();
+  const { snippets, refreshSnippets, settings, updateSettings, importData: contextImportData, collections, projects, files, workspaceFolders, definitions, libraries, challenges, tags } = useSnippets();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [resetStep, setResetStep] = useState(0);
   const [resetConfirmation, setResetConfirmation] = useState('');
@@ -25,8 +25,22 @@ export default function Settings() {
 
   const exportData = async () => {
     try {
-      const response = await fetch('/api/backup');
-      const data = await response.json();
+      // Construct export data from context state to ensure it works even without backend
+      const data = {
+        snippets,
+        collections,
+        projects,
+        files,
+        workspaceFolders,
+        definitions,
+        libraries,
+        challenges,
+        tags,
+        settings,
+        version: '1.2.0',
+        exported_at: new Date().toISOString()
+      };
+      
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const downloadAnchorNode = document.createElement('a');
@@ -49,19 +63,9 @@ export default function Settings() {
         if (e.target?.result) {
           try {
             const data = JSON.parse(e.target.result as string);
-            const response = await fetch('/api/restore', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            });
-            
-            if (response.ok) {
-              alert("Data restored successfully!");
-              refreshSnippets();
-            } else {
-              const err = await response.json();
-              alert(`Restore failed: ${err.error}`);
-            }
+            await contextImportData(data);
+            alert("Data restored successfully!");
+            refreshSnippets();
           } catch (error) {
             alert("Invalid JSON file or restore failed");
           }
@@ -179,6 +183,44 @@ export default function Settings() {
                 <div className={cn(
                   "absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm",
                   settings.compactMode ? "left-7" : "left-1"
+                )} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+              <div>
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Word Wrap</h4>
+                <p className="text-xs text-zinc-500">Wrap long lines in the code editor.</p>
+              </div>
+              <button 
+                onClick={() => handleUpdateSetting({ wordWrap: !settings.wordWrap })}
+                className={cn(
+                  "w-12 h-6 rounded-full transition-all relative",
+                  settings.wordWrap ? "bg-indigo-600" : "bg-zinc-200 dark:bg-zinc-700"
+                )}
+              >
+                <div className={cn(
+                  "absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm",
+                  settings.wordWrap ? "left-7" : "left-1"
+                )} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+              <div>
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Show Line Numbers</h4>
+                <p className="text-xs text-zinc-500">Display line numbers in the code editor.</p>
+              </div>
+              <button 
+                onClick={() => handleUpdateSetting({ showLineNumbers: !settings.showLineNumbers })}
+                className={cn(
+                  "w-12 h-6 rounded-full transition-all relative",
+                  settings.showLineNumbers ? "bg-indigo-600" : "bg-zinc-200 dark:bg-zinc-700"
+                )}
+              >
+                <div className={cn(
+                  "absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm",
+                  settings.showLineNumbers ? "left-7" : "left-1"
                 )} />
               </button>
             </div>
