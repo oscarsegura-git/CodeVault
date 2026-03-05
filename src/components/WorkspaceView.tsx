@@ -48,6 +48,7 @@ export default function WorkspaceView() {
   const [selection, setSelection] = useState('');
   const [showSnippetModal, setShowSnippetModal] = useState(false);
   const [snippetTitle, setSnippetTitle] = useState('');
+  const [snippetLanguage, setSnippetLanguage] = useState('');
   const [snippetTags, setSnippetTags] = useState<string[]>([]);
   const [snippetLibraries, setSnippetLibraries] = useState<string[]>([]);
   const [snippetTagInput, setSnippetTagInput] = useState('');
@@ -326,6 +327,7 @@ export default function WorkspaceView() {
   const openSnippetModal = () => {
     if (selection) {
       setSnippetTitle(`Snippet from ${fileName}`);
+      setSnippetLanguage(fileLang);
       setSnippetTags(['workspace', fileLang]);
       setShowSnippetModal(true);
     }
@@ -336,7 +338,7 @@ export default function WorkspaceView() {
     await addSnippet({
       title: snippetTitle,
       code: selection,
-      language: fileLang,
+      language: snippetLanguage,
       description: `Extracted from ${fileName} in Workspace`,
       tags: snippetTags,
       complexity: 'Intermediate',
@@ -1093,6 +1095,16 @@ export default function WorkspaceView() {
                     className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold"
                     placeholder="e.g. Helper Function"
                     autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-1.5">Language</label>
+                  <SearchableSelect
+                    options={LANGUAGES.map(lang => ({ value: lang, label: lang }))}
+                    value={snippetLanguage}
+                    onChange={(val) => setSnippetLanguage(val as string)}
+                    placeholder="Select Language"
                   />
                 </div>
 

@@ -163,14 +163,14 @@ export default function BoardView() {
 
   return (
     <div className="h-full w-full flex flex-col p-4 md:p-8 overflow-y-auto bg-zinc-50/50 dark:bg-zinc-950/50 custom-scrollbar">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-6 mb-8 shrink-0">
         <div>
           <h2 className="text-3xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight mb-1">Board</h2>
           <p className="text-zinc-500 font-medium">
             {boardType === 'projects' ? 'Manage your projects and track progress.' : 'Track your learning progress across snippets.'}
           </p>
         </div>
-        <div className="flex flex-col md:flex-row items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="relative w-full md:w-64 group">
              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                <Layout className="w-4 h-4 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" />

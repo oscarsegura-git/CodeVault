@@ -246,22 +246,22 @@ export default function GlossaryView() {
         </div>
       </header>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6 shrink-0 bg-white dark:bg-zinc-900 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <div className="relative flex-1">
+      <div className="flex flex-wrap gap-4 mb-6 shrink-0 bg-white dark:bg-zinc-900 p-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-indigo-500" />
           <input 
             type="text" 
-            placeholder="Search definitions by term or content..." 
+            placeholder="Search definitions..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
           />
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide items-center px-2">
+        <div className="flex flex-wrap gap-2 items-center px-2">
           <select 
             value={sortBy} 
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="px-4 py-3 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="term">Sort: A-Z</option>
             <option value="updated_at">Sort: Newest</option>
@@ -270,7 +270,7 @@ export default function GlossaryView() {
           <select 
             value={selectedLanguage || ''} 
             onChange={(e) => setSelectedLanguage(e.target.value || null)}
-            className="px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="px-4 py-3 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">All Languages</option>
             {allLanguages.map(lang => (
@@ -281,7 +281,7 @@ export default function GlossaryView() {
           <select 
             value={selectedLibrary || ''} 
             onChange={(e) => setSelectedLibrary(e.target.value || null)}
-            className="px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="px-4 py-3 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">All Libraries</option>
             {availableLibraries.map(lib => (
@@ -292,7 +292,7 @@ export default function GlossaryView() {
           <select 
             value={selectedTag || ''} 
             onChange={(e) => setSelectedTag(e.target.value || null)}
-            className="px-4 py-2 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
+            className="px-4 py-3 rounded-xl text-sm font-bold bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 outline-none focus:ring-2 focus:ring-indigo-500/20"
           >
             <option value="">All Tags</option>
             {allTags.map(tag => (
@@ -300,249 +300,255 @@ export default function GlossaryView() {
             ))}
           </select>
           
-          <div className="w-px h-8 bg-zinc-200 dark:bg-zinc-800 mx-2 shrink-0" />
+          <div className="w-px h-8 bg-zinc-200 dark:bg-zinc-800 mx-2 shrink-0 hidden md:block" />
 
-          <button
-            onClick={() => setSelectedCategory(null)}
-            className={cn(
-              "px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all",
-              selectedCategory === null 
-                ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900" 
-                : "bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-            )}
-          >
-            All
-          </button>
-          {CATEGORIES.map(cat => (
+          <div className="flex flex-wrap gap-2">
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
+              onClick={() => setSelectedCategory(null)}
               className={cn(
                 "px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all",
-                selectedCategory === cat 
+                selectedCategory === null 
                   ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900" 
                   : "bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800"
               )}
             >
-              {cat}
+              All
             </button>
-          ))}
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={cn(
+                  "px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all",
+                  selectedCategory === cat 
+                    ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900" 
+                    : "bg-white dark:bg-zinc-900 text-zinc-500 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <AnimatePresence>
         {isCreating && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-6 shrink-0 bg-white dark:bg-zinc-900 p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-y-auto max-h-[60vh] custom-scrollbar"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">
-                {editingId ? 'Edit Definition' : 'New Definition'}
-              </h3>
-              <button onClick={resetForm} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full">
-                <X className="w-5 h-5 text-zinc-500" />
-              </button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="md:col-span-2 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Term</label>
-                    <input 
-                      type="text" 
-                      value={term}
-                      onChange={(e) => setTerm(e.target.value)}
-                      className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-lg"
-                      placeholder="e.g. Closure"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Language / Context</label>
-                    <SearchableSelect
-                      options={LANGUAGES.map(lang => ({ value: lang, label: lang }))}
-                      value={language}
-                      onChange={(val) => setLanguage(val as string)}
-                      placeholder="Select Language"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Definition</label>
-                  <textarea 
-                    value={definition}
-                    onChange={(e) => setDefinition(e.target.value)}
-                    className="w-full p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 min-h-[120px] text-base leading-relaxed"
-                    placeholder="Explain the concept clearly..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Example Code</label>
-                  <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-zinc-50 dark:bg-[#0d1117] min-h-[150px] flex flex-col">
-                    <div className="flex items-center justify-between px-3 py-2 bg-zinc-100/50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
-                      <span className="text-[10px] font-bold text-zinc-500 uppercase">{language || 'Text'}</span>
-                      <button 
-                        onClick={() => copyToClipboard(example)}
-                        className="p-1 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-                        title="Copy Code"
-                        type="button"
-                      >
-                        <Copy className="w-3 h-3" />
-                      </button>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white dark:bg-zinc-900 w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col"
+            >
+              <div className="flex justify-between items-center p-6 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 shrink-0">
+                <h3 className="text-2xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">
+                  {editingId ? 'Edit Definition' : 'New Definition'}
+                </h3>
+                <button onClick={resetForm} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors">
+                  <X className="w-5 h-5 text-zinc-500" />
+                </button>
+              </div>
+              
+              <div className="overflow-y-auto p-8 custom-scrollbar">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="md:col-span-2 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Term</label>
+                        <input 
+                          type="text" 
+                          value={term}
+                          onChange={(e) => setTerm(e.target.value)}
+                          className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-bold text-lg"
+                          placeholder="e.g. Closure"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Language / Context</label>
+                        <SearchableSelect
+                          options={LANGUAGES.map(lang => ({ value: lang, label: lang }))}
+                          value={language}
+                          onChange={(val) => setLanguage(val as string)}
+                          placeholder="Select Language"
+                        />
+                      </div>
                     </div>
-                    <div className="flex-1 relative overflow-auto custom-scrollbar max-h-[400px]">
-                      <Editor
-                        value={example}
-                        onValueChange={setExample}
-                        highlight={code => {
-                          const lang = getPrismLang(language);
-                          return Prism.highlight(code, Prism.languages[lang] || Prism.languages.javascript, lang);
-                        }}
-                        padding={16}
-                        tabSize={2}
-                        insertSpaces={true}
-                        style={{
-                          fontFamily: '"JetBrains Mono", monospace',
-                          fontSize: '14px',
-                          minHeight: '200px',
-                          outline: 'none',
-                          backgroundColor: 'transparent',
-                          lineHeight: '1.6',
-                        }}
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Definition</label>
+                      <textarea 
+                        value={definition}
+                        onChange={(e) => setDefinition(e.target.value)}
+                        className="w-full p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 min-h-[120px] text-base leading-relaxed"
+                        placeholder="Explain the concept clearly..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Example Code</label>
+                      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-zinc-50 dark:bg-[#0d1117] min-h-[150px] flex flex-col">
+                        <div className="flex items-center justify-between px-3 py-2 bg-zinc-100/50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
+                          <span className="text-[10px] font-bold text-zinc-500 uppercase">{language || 'Text'}</span>
+                          <button 
+                            onClick={() => copyToClipboard(example)}
+                            className="p-1 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                            title="Copy Code"
+                            type="button"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <div className="flex-1 relative overflow-auto custom-scrollbar max-h-[400px]">
+                          <Editor
+                            value={example}
+                            onValueChange={setExample}
+                            highlight={code => {
+                              const lang = getPrismLang(language);
+                              return Prism.highlight(code, Prism.languages[lang] || Prism.languages.javascript, lang);
+                            }}
+                            padding={16}
+                            tabSize={2}
+                            insertSpaces={true}
+                            style={{
+                              fontFamily: '"JetBrains Mono", monospace',
+                              fontSize: '14px',
+                              minHeight: '200px',
+                              outline: 'none',
+                              backgroundColor: 'transparent',
+                              lineHeight: '1.6',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Complexity</label>
+                        <select 
+                          value={complexity}
+                          onChange={(e) => setComplexity(e.target.value as any)}
+                          className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                        >
+                          {COMPLEXITY_LEVELS.map(level => (
+                            <option key={level} value={level}>{level}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Learning Status</label>
+                        <select 
+                          value={learningStatus}
+                          onChange={(e) => setLearningStatus(e.target.value as any)}
+                          className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                        >
+                          {LEARNING_STATUSES.map(status => (
+                            <option key={status} value={status}>{status}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Category</label>
+                      <select 
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value as any)}
+                        className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                      >
+                        {CATEGORIES.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Libraries</label>
+                      <LibrarySelector selectedLibraries={libraries} onChange={setLibraries} />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Tags</label>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {tags.map(tag => (
+                          <span key={tag} className="bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                            {tag}
+                            <button onClick={() => removeItem(setTags, tags, tag)}><X className="w-3 h-3" /></button>
+                          </span>
+                        ))}
+                      </div>
+                      <input 
+                        type="text" 
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && addItem(setTags, tags, tagInput, setTagInput)}
+                        className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
+                        placeholder="Add tag and press Enter"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Related Terms</label>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {relatedTerms.map(term => (
+                          <span key={term} className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                            {term}
+                            <button onClick={() => removeItem(setRelatedTerms, relatedTerms, term)}><X className="w-3 h-3" /></button>
+                          </span>
+                        ))}
+                      </div>
+                      <input 
+                        type="text" 
+                        value={relatedInput}
+                        onChange={(e) => setRelatedInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && addItem(setRelatedTerms, relatedTerms, relatedInput, setRelatedInput)}
+                        className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
+                        placeholder="Add term..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">References (URLs)</label>
+                      <div className="flex flex-col gap-2 mb-2">
+                        {references.map(ref => (
+                          <div key={ref} className="flex items-center justify-between bg-zinc-50 dark:bg-zinc-950 p-2 rounded-lg text-xs truncate">
+                            <span className="truncate flex-1">{ref}</span>
+                            <button onClick={() => removeItem(setReferences, references, ref)}><X className="w-3 h-3" /></button>
+                          </div>
+                        ))}
+                      </div>
+                      <input 
+                        type="text" 
+                        value={referenceInput}
+                        onChange={(e) => setReferenceInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && addItem(setReferences, references, referenceInput, setReferenceInput)}
+                        className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
+                        placeholder="Add URL..."
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Complexity</label>
-                    <select 
-                      value={complexity}
-                      onChange={(e) => setComplexity(e.target.value as any)}
-                      className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                    >
-                      {COMPLEXITY_LEVELS.map(level => (
-                        <option key={level} value={level}>{level}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Learning Status</label>
-                    <select 
-                      value={learningStatus}
-                      onChange={(e) => setLearningStatus(e.target.value as any)}
-                      className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                    >
-                      {LEARNING_STATUSES.map(status => (
-                        <option key={status} value={status}>{status}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Category</label>
-                  <select 
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as any)}
-                    className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                  >
-                    {CATEGORIES.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Libraries</label>
-                  <LibrarySelector selectedLibraries={libraries} onChange={setLibraries} />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Tags</label>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {tags.map(tag => (
-                      <span key={tag} className="bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
-                        {tag}
-                        <button onClick={() => removeItem(setTags, tags, tag)}><X className="w-3 h-3" /></button>
-                      </span>
-                    ))}
-                  </div>
-                  <input 
-                    type="text" 
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addItem(setTags, tags, tagInput, setTagInput)}
-                    className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
-                    placeholder="Add tag and press Enter"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Related Terms</label>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {relatedTerms.map(term => (
-                      <span key={term} className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
-                        {term}
-                        <button onClick={() => removeItem(setRelatedTerms, relatedTerms, term)}><X className="w-3 h-3" /></button>
-                      </span>
-                    ))}
-                  </div>
-                  <input 
-                    type="text" 
-                    value={relatedInput}
-                    onChange={(e) => setRelatedInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addItem(setRelatedTerms, relatedTerms, relatedInput, setRelatedInput)}
-                    className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
-                    placeholder="Add term..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">References (URLs)</label>
-                  <div className="flex flex-col gap-2 mb-2">
-                    {references.map(ref => (
-                      <div key={ref} className="flex items-center justify-between bg-zinc-50 dark:bg-zinc-950 p-2 rounded-lg text-xs truncate">
-                        <span className="truncate flex-1">{ref}</span>
-                        <button onClick={() => removeItem(setReferences, references, ref)}><X className="w-3 h-3" /></button>
-                      </div>
-                    ))}
-                  </div>
-                  <input 
-                    type="text" 
-                    value={referenceInput}
-                    onChange={(e) => setReferenceInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addItem(setReferences, references, referenceInput, setReferenceInput)}
-                    className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
-                    placeholder="Add URL..."
-                  />
-                </div>
+              <div className="flex justify-end gap-3 p-6 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 shrink-0">
+                <button 
+                  onClick={resetForm}
+                  className="px-6 py-3 text-zinc-500 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={editingId ? handleUpdate : handleCreate}
+                  className="px-8 py-3 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-black rounded-xl transition-colors shadow-lg shadow-zinc-900/10"
+                >
+                  {editingId ? 'Update Definition' : 'Save Definition'}
+                </button>
               </div>
-            </div>
-
-            <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800">
-              <button 
-                onClick={resetForm}
-                className="px-6 py-3 text-zinc-500 font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
-              >
-                Cancel
-              </button>
-              <button 
-                onClick={editingId ? handleUpdate : handleCreate}
-                className="px-8 py-3 bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-black rounded-xl transition-colors shadow-lg shadow-zinc-900/10"
-              >
-                {editingId ? 'Update Definition' : 'Save Definition'}
-              </button>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
