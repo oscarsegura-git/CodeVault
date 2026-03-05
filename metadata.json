@@ -1,0 +1,5 @@
+{
+  "name": "CodeVault",
+  "description": "A local, offline-first code snippet manager for developers. Store, categorize, and retrieve code snippets with a minimalist, high-performance interface.",
+  "requestFramePermissions": []
+}

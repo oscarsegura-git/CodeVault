@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-zinc-50: var(--zinc-50);
+  --color-zinc-100: var(--zinc-100);
+  --color-zinc-200: var(--zinc-200);
+  --color-zinc-300: var(--zinc-300);
+  --color-zinc-400: var(--zinc-400);
+  --color-zinc-500: var(--zinc-500);
+  --color-zinc-600: var(--zinc-600);
+  --color-zinc-700: var(--zinc-700);
+  --color-zinc-800: var(--zinc-800);
+  --color-zinc-900: var(--zinc-900);
+  --color-zinc-950: var(--zinc-950);
+  --color-white: var(--white);
+  --color-black: var(--black);
+  
+  --color-indigo-50: var(--indigo-50);
+  --color-indigo-100: var(--indigo-100);
+  --color-amber-50: var(--amber-50);
+  --color-amber-100: var(--amber-100);
+  --color-emerald-50: var(--emerald-50);
+  --color-emerald-100: var(--emerald-100);
+  --color-red-50: var(--red-50);
+  --color-red-100: var(--red-100);
+}
+
+:root {
+  --zinc-50: #fafafa;
+  --zinc-100: #f4f4f5;
+  --zinc-200: #e4e4e7;
+  --zinc-300: #d4d4d8;
+  --zinc-400: #a1a1aa;
+  --zinc-500: #71717a;
+  --zinc-600: #52525b;
+  --zinc-700: #3f3f46;
+  --zinc-800: #27272a;
+  --zinc-900: #18181b;
+  --zinc-950: #09090b;
+  --white: #ffffff;
+  --black: #000000;
+  
+  --indigo-50: #eef2ff;
+  --indigo-100: #e0e7ff;
+  --amber-50: #fffbeb;
+  --amber-100: #fef3c7;
+  --emerald-50: #ecfdf5;
+  --emerald-100: #d1fae5;
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+}
+
+.dark {
+  --zinc-50: #18181b;
+  --zinc-100: #27272a;
+  --zinc-200: #3f3f46;
+  --zinc-300: #52525b;
+  --zinc-400: #71717a;
+  --zinc-500: #a1a1aa;
+  --zinc-600: #d4d4d8;
+  --zinc-700: #e4e4e7;
+  --zinc-800: #f4f4f5;
+  --zinc-900: #fafafa;
+  --zinc-950: #ffffff;
+  --white: #09090b;
+  --black: #ffffff;
+  
+  --indigo-50: #1e1b4b;
+  --indigo-100: #312e81;
+  --amber-50: #451a03;
+  --amber-100: #78350f;
+  --emerald-50: #022c22;
+  --emerald-100: #064e3b;
+  --red-50: #450a0a;
+  --red-100: #7f1d1d;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
