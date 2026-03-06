@@ -1,10 +1,25 @@
+import { useState } from 'react';
 import { useSnippets } from '../context/SnippetContext';
 import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { BookOpen, Code, FileCode, Trophy, Zap, Activity, Target, Book } from 'lucide-react';
+import { BookOpen, Code, FileCode, Trophy, Zap, Activity, Target, Book, Calendar } from 'lucide-react';
 
 export default function StatsView() {
-  const { snippets, definitions, projects, files, challenges } = useSnippets();
+  const { snippets: allSnippets, definitions: allDefinitions, projects, files, challenges: allChallenges } = useSnippets();
+  const [timeFilter, setTimeFilter] = useState<'all' | '30days' | 'year'>('all');
+
+  const filterByTime = (timestamp: number) => {
+    if (timeFilter === 'all') return true;
+    const now = Date.now();
+    const diff = now - timestamp;
+    if (timeFilter === '30days') return diff <= 30 * 24 * 60 * 60 * 1000;
+    if (timeFilter === 'year') return diff <= 365 * 24 * 60 * 60 * 1000;
+    return true;
+  };
+
+  const snippets = allSnippets.filter(s => filterByTime(s.updated_at));
+  const definitions = allDefinitions.filter(d => filterByTime(d.updated_at));
+  const challenges = allChallenges.filter(c => filterByTime(c.updated_at));
 
   // Calculate Glossary Stats
   const totalTerms = definitions.length;
@@ -157,6 +172,38 @@ export default function StatsView() {
         <div>
           <h1 className="text-3xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight mb-2">Statistics</h1>
           <p className="text-zinc-500 dark:text-zinc-400">Track your learning progress and vault growth.</p>
+        </div>
+        <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <button
+            onClick={() => setTimeFilter('all')}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              timeFilter === 'all' 
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm' 
+                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300'
+            }`}
+          >
+            All Time
+          </button>
+          <button
+            onClick={() => setTimeFilter('year')}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              timeFilter === 'year' 
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm' 
+                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300'
+            }`}
+          >
+            Past Year
+          </button>
+          <button
+            onClick={() => setTimeFilter('30days')}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              timeFilter === '30days' 
+                ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-sm' 
+                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300'
+            }`}
+          >
+            30 Days
+          </button>
         </div>
       </div>
 

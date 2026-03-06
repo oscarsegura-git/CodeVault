@@ -76,6 +76,10 @@ interface SnippetContextType {
     masterPassword?: string;
     wordWrap: boolean;
     showLineNumbers: boolean;
+    tabSize: number;
+    minimap: boolean;
+    fontFamily: string;
+    sessionTimeout: number;
   };
   updateSettings: (settings: any) => void;
   importData: (data: any) => Promise<void>;
@@ -126,7 +130,11 @@ export function SnippetProvider({ children }: { children: ReactNode }) {
       autoBackup: false,
       appLock: false,
       wordWrap: true,
-      showLineNumbers: true
+      showLineNumbers: true,
+      tabSize: 2,
+      minimap: false,
+      fontFamily: 'JetBrains Mono',
+      sessionTimeout: 30
     };
   });
 

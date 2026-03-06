@@ -16,7 +16,7 @@ export default function WorkspaceView() {
   const [isCreating, setIsCreating] = useState(false);
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFileName, setNewFileName] = useState('');
-  const [newFileLang, setNewFileLang] = useState('javascript');
+  const [newFileLang, setNewFileLang] = useState(settings.defaultLanguage || 'javascript');
   const [newFolderName, setNewFolderName] = useState('');
   const [targetFolderId, setTargetFolderId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,10 +48,14 @@ export default function WorkspaceView() {
   const [selection, setSelection] = useState('');
   const [showSnippetModal, setShowSnippetModal] = useState(false);
   const [snippetTitle, setSnippetTitle] = useState('');
-  const [snippetLanguage, setSnippetLanguage] = useState('');
-  const [snippetTags, setSnippetTags] = useState<string[]>([]);
+  const [snippetLanguage, setSnippetLanguage] = useState('JavaScript');
+  const [snippetDescription, setSnippetDescription] = useState('');
   const [snippetLibraries, setSnippetLibraries] = useState<string[]>([]);
+  const [snippetComplexity, setSnippetComplexity] = useState<'Beginner' | 'Intermediate' | 'Advanced'>('Beginner');
+  const [snippetTags, setSnippetTags] = useState<string[]>([]);
   const [snippetTagInput, setSnippetTagInput] = useState('');
+  const [snippetSourceUrl, setSnippetSourceUrl] = useState('');
+  const [snippetPerformanceNotes, setSnippetPerformanceNotes] = useState('');
 
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renamingName, setRenamingName] = useState('');
@@ -327,8 +331,17 @@ export default function WorkspaceView() {
   const openSnippetModal = () => {
     if (selection) {
       setSnippetTitle(`Snippet from ${fileName}`);
-      setSnippetLanguage(fileLang);
-      setSnippetTags(['workspace', fileLang]);
+      
+      // Find matching language with correct casing
+      const matchingLang = LANGUAGES.find(l => l.toLowerCase() === fileLang.toLowerCase()) || fileLang;
+      setSnippetLanguage(matchingLang);
+      
+      setSnippetDescription('');
+      setSnippetLibraries([]);
+      setSnippetComplexity('Beginner');
+      setSnippetTags(['workspace']);
+      setSnippetSourceUrl('');
+      setSnippetPerformanceNotes('');
       setShowSnippetModal(true);
     }
   };
@@ -339,13 +352,22 @@ export default function WorkspaceView() {
       title: snippetTitle,
       code: selection,
       language: snippetLanguage,
-      description: `Extracted from ${fileName} in Workspace`,
+      description: snippetDescription,
       tags: snippetTags,
-      complexity: 'Intermediate',
-      learning_status: 'Reference'
+      libraries: snippetLibraries,
+      complexity: snippetComplexity,
+      learning_status: 'Reference',
+      source_url: snippetSourceUrl,
+      performance_notes: snippetPerformanceNotes
     });
     setShowSnippetModal(false);
     setSelection('');
+    setSnippetTitle('');
+    setSnippetDescription('');
+    setSnippetTags([]);
+    setSnippetLibraries([]);
+    setSnippetSourceUrl('');
+    setSnippetPerformanceNotes('');
     // Clear selection in editor visually if possible (hard with simple editor)
     alert('Snippet saved successfully!');
   };
@@ -1106,6 +1128,59 @@ export default function WorkspaceView() {
                     onChange={(val) => setSnippetLanguage(val as string)}
                     placeholder="Select Language"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-500 uppercase mb-1.5">Description</label>
+                  <textarea
+                    value={snippetDescription}
+                    onChange={(e) => setSnippetDescription(e.target.value)}
+                    className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm resize-none"
+                    placeholder="Optional description..."
+                    rows={2}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-1.5">Source URL</label>
+                    <input 
+                      type="text" 
+                      value={snippetSourceUrl}
+                      onChange={(e) => setSnippetSourceUrl(e.target.value)}
+                      className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
+                      placeholder="https://..."
+                    />
+                  </div>
+                   <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-1.5">Performance Notes</label>
+                    <input 
+                      type="text" 
+                      value={snippetPerformanceNotes}
+                      onChange={(e) => setSnippetPerformanceNotes(e.target.value)}
+                      className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
+                      placeholder="e.g. O(n) complexity"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-1.5">Complexity</label>
+                    <select
+                      value={snippetComplexity}
+                      onChange={(e) => setSnippetComplexity(e.target.value as any)}
+                      className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm"
+                    >
+                      <option value="Beginner">Beginner</option>
+                      <option value="Intermediate">Intermediate</option>
+                      <option value="Advanced">Advanced</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-1.5">Libraries</label>
+                    <LibrarySelector selectedLibraries={snippetLibraries} onChange={setSnippetLibraries} />
+                  </div>
                 </div>
 
                 <div>

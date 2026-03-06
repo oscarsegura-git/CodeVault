@@ -153,6 +153,24 @@ export default function Settings() {
 
             <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
               <div>
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Font Family</h4>
+                <p className="text-xs text-zinc-500">Choose the font for the code editor.</p>
+              </div>
+              <select 
+                value={settings.fontFamily || 'JetBrains Mono'}
+                onChange={(e) => handleUpdateSetting({ fontFamily: e.target.value })}
+                className="px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 outline-none focus:ring-2 focus:ring-zinc-500/20"
+              >
+                <option value="JetBrains Mono">JetBrains Mono</option>
+                <option value="Fira Code">Fira Code</option>
+                <option value="Consolas">Consolas</option>
+                <option value="Monaco">Monaco</option>
+                <option value="Source Code Pro">Source Code Pro</option>
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+              <div>
                 <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Editor Font Size</h4>
                 <p className="text-xs text-zinc-500">Adjust the size of the code text.</p>
               </div>
@@ -224,6 +242,41 @@ export default function Settings() {
                 )} />
               </button>
             </div>
+
+            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+              <div>
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Tab Size</h4>
+                <p className="text-xs text-zinc-500">Number of spaces per indentation level.</p>
+              </div>
+              <select 
+                value={settings.tabSize}
+                onChange={(e) => handleUpdateSetting({ tabSize: parseInt(e.target.value) })}
+                className="px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 outline-none focus:ring-2 focus:ring-zinc-500/20"
+              >
+                <option value="2">2 Spaces</option>
+                <option value="4">4 Spaces</option>
+                <option value="8">8 Spaces</option>
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+              <div>
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Minimap</h4>
+                <p className="text-xs text-zinc-500">Show a code minimap (if supported).</p>
+              </div>
+              <button 
+                onClick={() => handleUpdateSetting({ minimap: !settings.minimap })}
+                className={cn(
+                  "w-12 h-6 rounded-full transition-all relative",
+                  settings.minimap ? "bg-indigo-600" : "bg-zinc-200 dark:bg-zinc-700"
+                )}
+              >
+                <div className={cn(
+                  "absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm",
+                  settings.minimap ? "left-7" : "left-1"
+                )} />
+              </button>
+            </div>
           </div>
         </section>
 
@@ -262,6 +315,24 @@ export default function Settings() {
                   )} />
                 </button>
               </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
+              <div>
+                <h4 className="font-bold text-zinc-900 dark:text-zinc-100">Session Timeout</h4>
+                <p className="text-xs text-zinc-500">Automatically lock app after inactivity.</p>
+              </div>
+              <select 
+                value={settings.sessionTimeout || 30}
+                onChange={(e) => handleUpdateSetting({ sessionTimeout: parseInt(e.target.value) })}
+                className="px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-300 outline-none focus:ring-2 focus:ring-zinc-500/20"
+              >
+                <option value="5">5 Minutes</option>
+                <option value="15">15 Minutes</option>
+                <option value="30">30 Minutes</option>
+                <option value="60">1 Hour</option>
+                <option value="0">Never</option>
+              </select>
             </div>
 
             <div className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800">
@@ -331,6 +402,21 @@ export default function Settings() {
                 Import JSON
                 <input type="file" accept=".json" onChange={importData} className="hidden" />
               </label>
+            </div>
+
+            <div className="p-4 bg-zinc-50 dark:bg-zinc-950 rounded-xl border border-zinc-100 dark:border-zinc-800">
+              <h4 className="font-medium text-zinc-900 dark:text-zinc-100 mb-2">Clear Cache</h4>
+              <p className="text-sm text-zinc-500 mb-4">Free up space by removing temporary files.</p>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('codevault_settings');
+                  window.location.reload();
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Clear Cache
+              </button>
             </div>
           </div>
         </section>

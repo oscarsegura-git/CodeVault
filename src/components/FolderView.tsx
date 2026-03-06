@@ -7,21 +7,40 @@ import { cn } from '../lib/utils';
 import SnippetCard from './SnippetCard';
 
 export default function FolderView() {
-  const { collections, addCollection, deleteCollection, snippets, updateSnippet } = useSnippets();
+  const { collections, addCollection, deleteCollection, updateCollection, snippets, updateSnippet } = useSnippets();
   const { confirm } = useConfirm();
   const [isAdding, setIsAdding] = useState(false);
   const [newName, setNewName] = useState('');
+  const [newDescription, setNewDescription] = useState('');
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [isSelectingSnippet, setIsSelectingSnippet] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isEditingFolder, setIsEditingFolder] = useState(false);
+  const [editFolderName, setEditFolderName] = useState('');
+  const [editFolderDescription, setEditFolderDescription] = useState('');
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newName.trim()) {
-      await addCollection(newName.trim());
+      await addCollection(newName.trim(), newDescription.trim());
       setNewName('');
+      setNewDescription('');
       setIsAdding(false);
     }
+  };
+
+  const handleUpdateFolder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedFolderId && editFolderName.trim()) {
+      await updateCollection(selectedFolderId, editFolderName.trim(), editFolderDescription.trim());
+      setIsEditingFolder(false);
+    }
+  };
+
+  const startEditFolder = (folder: any) => {
+    setEditFolderName(folder.name);
+    setEditFolderDescription(folder.description || '');
+    setIsEditingFolder(true);
   };
 
   const handleDeleteFolder = async (e: React.MouseEvent, id: string) => {
@@ -83,16 +102,50 @@ export default function FolderView() {
         className="p-8 h-full flex flex-col"
       >
         <div className="flex items-center justify-between mb-8 shrink-0">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1">
             <button 
               onClick={() => setSelectedFolderId(null)}
               className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-500 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div>
-              <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{selectedFolder.name}</h2>
-              <p className="text-sm text-zinc-500">{folderSnippets.length} snippets in this folder</p>
+            <div className="flex-1">
+              {isEditingFolder ? (
+                <form onSubmit={handleUpdateFolder} className="flex flex-col gap-2 max-w-md">
+                  <input
+                    value={editFolderName}
+                    onChange={(e) => setEditFolderName(e.target.value)}
+                    className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 bg-transparent border-b border-zinc-300 dark:border-zinc-700 focus:border-indigo-500 outline-none px-1"
+                    autoFocus
+                  />
+                  <input
+                    value={editFolderDescription}
+                    onChange={(e) => setEditFolderDescription(e.target.value)}
+                    placeholder="Add a description..."
+                    className="text-sm text-zinc-500 bg-transparent border-b border-zinc-300 dark:border-zinc-700 focus:border-indigo-500 outline-none px-1"
+                  />
+                  <div className="flex gap-2 mt-1">
+                    <button type="submit" className="text-xs bg-indigo-500 text-white px-2 py-1 rounded">Save</button>
+                    <button type="button" onClick={() => setIsEditingFolder(false)} className="text-xs bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 px-2 py-1 rounded">Cancel</button>
+                  </div>
+                </form>
+              ) : (
+                <div className="group flex items-start gap-2">
+                  <div>
+                    <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+                      {selectedFolder.name}
+                      <button 
+                        onClick={() => startEditFolder(selectedFolder)}
+                        className="opacity-0 group-hover:opacity-100 p-1.5 text-zinc-400 hover:text-indigo-500 transition-all"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                      </button>
+                    </h2>
+                    <p className="text-sm text-zinc-500">{selectedFolder.description || 'No description provided.'}</p>
+                    <p className="text-xs text-zinc-400 mt-1">{folderSnippets.length} snippets</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           <button 
@@ -245,6 +298,12 @@ export default function FolderView() {
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="Enter folder name..."
                   className="w-full px-4 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-zinc-500/20"
+                />
+                <textarea 
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  placeholder="Enter description (optional)..."
+                  className="w-full px-4 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 outline-none focus:ring-2 focus:ring-zinc-500/20 resize-none h-20"
                 />
                 <div className="flex items-center gap-2 w-full">
                   <button 

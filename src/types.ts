@@ -64,6 +64,8 @@ export interface Collection {
   id: string;
   name: string;
   description?: string;
+  color?: string;
+  icon?: string;
   created_at: number;
   snippet_count?: number;
 }
@@ -101,7 +103,9 @@ export interface Definition {
   complexity?: 'Beginner' | 'Intermediate' | 'Advanced';
   learning_status?: 'Learning' | 'Mastered' | 'Reference';
   language?: string;
+  image_url?: string;
   example?: string;
+  notes?: string;
   related_terms?: string[]; // stored as JSON string in DB
   references?: string[]; // stored as JSON string in DB
   tags?: string[]; // stored as JSON string in DB

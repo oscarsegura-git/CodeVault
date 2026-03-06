@@ -33,7 +33,9 @@ export default function GlossaryView() {
   const [complexity, setComplexity] = useState<typeof COMPLEXITY_LEVELS[number]>('Beginner');
   const [learningStatus, setLearningStatus] = useState<typeof LEARNING_STATUSES[number]>('Learning');
   const [language, setLanguage] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [example, setExample] = useState('');
+  const [notes, setNotes] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [relatedTerms, setRelatedTerms] = useState<string[]>([]);
@@ -84,7 +86,7 @@ export default function GlossaryView() {
     try {
       await addDefinition({ 
         term, definition, category, complexity, learning_status: learningStatus, 
-        language, example, tags, related_terms: relatedTerms, references, libraries
+        language, image_url: imageUrl, example, notes, tags, related_terms: relatedTerms, references, libraries
       });
       console.log('Definition added successfully');
       resetForm();
@@ -97,7 +99,7 @@ export default function GlossaryView() {
     if (!editingId || !term || !definition) return;
     await updateDefinition(editingId, { 
       term, definition, category, complexity, learning_status: learningStatus,
-      language, example, tags, related_terms: relatedTerms, references, libraries
+      language, image_url: imageUrl, example, notes, tags, related_terms: relatedTerms, references, libraries
     });
     resetForm();
   };
@@ -127,7 +129,9 @@ export default function GlossaryView() {
     setComplexity(def.complexity || 'Beginner');
     setLearningStatus(def.learning_status || 'Learning');
     setLanguage(def.language || '');
+    setImageUrl(def.image_url || '');
     setExample(def.example || '');
+    setNotes(def.notes || '');
     setTags(def.tags || []);
     setRelatedTerms(def.related_terms || []);
     setReferences(def.references || []);
@@ -144,7 +148,9 @@ export default function GlossaryView() {
     setComplexity('Beginner');
     setLearningStatus('Learning');
     setLanguage('');
+    setImageUrl('');
     setExample('');
+    setNotes('');
     setTags([]);
     setRelatedTerms([]);
     setReferences([]);
@@ -386,6 +392,16 @@ export default function GlossaryView() {
                     </div>
 
                     <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Personal Notes</label>
+                      <textarea 
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="w-full p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 min-h-[100px] text-sm"
+                        placeholder="Add your own understanding or mnemonic..."
+                      />
+                    </div>
+
+                    <div>
                       <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Example Code</label>
                       <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-zinc-50 dark:bg-[#0d1117] min-h-[150px] flex flex-col">
                         <div className="flex items-center justify-between px-3 py-2 bg-zinc-100/50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
@@ -610,7 +626,23 @@ export default function GlossaryView() {
                   <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-100 mb-4 tracking-tight">{def.term}</h3>
                   
                   <div className="prose dark:prose-invert max-w-none text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
+                    {def.image_url && (
+                      <div className="mb-4 rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+                        <img 
+                          src={def.image_url} 
+                          alt={def.term} 
+                          className="w-full h-auto max-h-64 object-cover"
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                        />
+                      </div>
+                    )}
                     <p>{def.definition}</p>
+                    {def.notes && (
+                      <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 rounded-xl">
+                        <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider block mb-2">Notes</span>
+                        <p className="text-sm text-zinc-700 dark:text-zinc-300">{def.notes}</p>
+                      </div>
+                    )}
                   </div>
 
                   {(def.tags?.length > 0 || def.related_terms?.length > 0 || def.libraries?.length > 0) && (
@@ -721,8 +753,9 @@ export default function GlossaryView() {
                 onClick={() => setIsCardFlipped(!isCardFlipped)}
               >
                 <motion.div 
-                  className="w-full h-full relative preserve-3d transition-transform duration-500"
+                  className="w-full h-full relative preserve-3d"
                   animate={{ rotateX: isCardFlipped ? 180 : 0 }}
+                  transition={{ duration: 0.5 }}
                 >
                   {/* Front */}
                   <div className="absolute inset-0 backface-hidden bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col items-center justify-center p-12 text-center">

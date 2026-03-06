@@ -11,6 +11,7 @@ export default function LanguageView() {
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [selectedLibrary, setSelectedLibrary] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState<'name' | 'count'>('name');
 
   // Group snippets by language
   const languageGroups = snippets.reduce((acc, snippet) => {
@@ -24,25 +25,6 @@ export default function LanguageView() {
     }
     acc[langLower].count++;
     acc[langLower].originalNames.add(snippet.language);
-    return acc;
-  }, {} as Record<string, { name: string; count: number; originalNames: Set<string> }>);
-
-  // Group snippets by library
-  const libraryGroups = snippets.reduce((acc, snippet) => {
-    if (snippet.libraries && snippet.libraries.length > 0) {
-      snippet.libraries.forEach(lib => {
-        const libLower = lib.toLowerCase().trim();
-        if (!acc[libLower]) {
-          acc[libLower] = {
-            name: lib.trim(),
-            count: 0,
-            originalNames: new Set<string>()
-          };
-        }
-        acc[libLower].count++;
-        acc[libLower].originalNames.add(lib);
-      });
-    }
     return acc;
   }, {} as Record<string, { name: string; count: number; originalNames: Set<string> }>);
 
@@ -76,21 +58,42 @@ export default function LanguageView() {
     };
   }).sort((a, b) => a.name.localeCompare(b.name));
 
-  const libraryStats = Object.values(libraryGroups).map((group: { name: string; count: number; originalNames: Set<string> }) => {
-    return {
-      name: group.name,
-      count: group.count,
-      matches: (lib: string) => lib.toLowerCase().trim() === group.name.toLowerCase().trim()
-    };
-  }).sort((a, b) => a.name.localeCompare(b.name));
-
   const filteredLanguages = languageStats.filter(l => 
     l.name.toLowerCase().includes(search.toLowerCase())
-  );
+  ).sort((a, b) => {
+    if (sortBy === 'name') return a.name.localeCompare(b.name);
+    return b.count - a.count;
+  });
 
-  const filteredLibraries = libraryStats.filter(l => 
-    l.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Group libraries by language
+  const librariesByLanguage = snippets.reduce((acc, snippet) => {
+    const lang = snippet.language;
+    if (!acc[lang]) {
+      acc[lang] = new Set<string>();
+    }
+    snippet.libraries?.forEach(lib => acc[lang].add(lib));
+    return acc;
+  }, {} as Record<string, Set<string>>);
+
+  const libraryLanguageGroups = Object.entries(librariesByLanguage).map(([lang, libs]) => ({
+    language: lang,
+    libraries: Array.from(libs as Set<string>).map(lib => {
+      // Count snippets for this library in this language
+      const count = snippets.filter(s => s.language === lang && s.libraries?.includes(lib)).length;
+      return { name: lib, count };
+    }).sort((a, b) => a.name.localeCompare(b.name))
+  })).filter(group => group.libraries.length > 0).sort((a, b) => a.language.localeCompare(b.language));
+
+  const libraryStats = libraryLanguageGroups.flatMap(g => g.libraries);
+
+  const filteredLibraryGroups = libraryLanguageGroups.map(group => ({
+    ...group,
+    libraries: group.libraries.filter(lib => lib.name.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => {
+        if (sortBy === 'name') return a.name.localeCompare(b.name);
+        return b.count - a.count;
+      })
+  })).filter(group => group.libraries.length > 0);
 
   if (selectedLanguage) {
     // Find the group for the selected language
@@ -169,9 +172,8 @@ export default function LanguageView() {
   }
 
   if (selectedLibrary) {
-    const selectedGroup = libraryStats.find(l => l.name === selectedLibrary);
     const librarySnippets = snippets.filter(s => 
-      s.libraries && s.libraries.some(lib => selectedGroup ? selectedGroup.matches(lib) : lib === selectedLibrary)
+      s.libraries && s.libraries.some(lib => lib === selectedLibrary)
     );
 
     return (
@@ -214,6 +216,14 @@ export default function LanguageView() {
           <p className="text-zinc-500 text-sm">Explore your library by programming language or library.</p>
         </div>
         <div className="flex items-center gap-4">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'name' | 'count')}
+            className="px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm font-medium text-zinc-700 dark:text-zinc-300 outline-none focus:ring-2 focus:ring-zinc-500/20"
+          >
+            <option value="name">Name (A-Z)</option>
+            <option value="count">Count (High-Low)</option>
+          </select>
            <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800">
             <button
               onClick={() => setViewMode('languages')}
@@ -279,27 +289,36 @@ export default function LanguageView() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filteredLibraries.map(lib => (
-            <motion.div 
-              key={lib.name}
-              whileHover={{ y: -2 }}
-              onClick={() => setSelectedLibrary(lib.name)}
-              className="group bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
-            >
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                  <Code className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-zinc-900 dark:text-zinc-100">{lib.name}</h3>
-                  <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">{lib.count} Snippets</p>
-                </div>
+        <div className="space-y-8">
+          {filteredLibraryGroups.map(group => (
+            <div key={group.language}>
+              <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-4 px-2 border-l-4 border-indigo-500">
+                {group.language}
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {group.libraries.map(lib => (
+                  <motion.div 
+                    key={`${group.language}-${lib.name}`}
+                    whileHover={{ y: -2 }}
+                    onClick={() => setSelectedLibrary(lib.name)}
+                    className="group bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <Code className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-zinc-900 dark:text-zinc-100">{lib.name}</h3>
+                        <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">{lib.count} Snippets</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
+                  </motion.div>
+                ))}
               </div>
-              <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
-            </motion.div>
+            </div>
           ))}
-          {filteredLibraries.length === 0 && (
+          {filteredLibraryGroups.length === 0 && (
             <div className="col-span-full py-20 text-center">
               <p className="text-zinc-400">No libraries found matching your search.</p>
             </div>
